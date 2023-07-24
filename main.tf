@@ -20,7 +20,7 @@ resource "ssh_resource" "init" {
   host         = data.vault_kv_secret_v2.secret_data.data["host"]
   user         = data.vault_kv_secret_v2.secret_data.data["username"]
   password     = data.vault_kv_secret_v2.secret_data.data["current_password"]
-  port         = 10969 
+  port         = 22
 
   file {
     content     = "${data.vault_kv_secret_v2.secret_data.data["current_password"]}\n${data.vault_kv_secret_v2.secret_data.data["new_password"]}\n${data.vault_kv_secret_v2.secret_data.data["new_password"]}"
