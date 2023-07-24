@@ -5,10 +5,14 @@ provider "vault" {
 
 data "vault_kv_secret_v2" "secret_data" {
   mount = var.vault_path
-  name  = var.vault_name
+  for_each = toset(var.vault_name)
+  name  = each.key
 }
 
 output "vault_secrets" {
-  value = data.vault_kv_secret_v2.secret_data.data
+  value = {
+    for k, v in data.vault_kv_secret_v2.secret_data : k => v.data["current_password"]
+  }
+  # data.vault_kv_secret_v2.secret_data.data
   sensitive = true
 }
