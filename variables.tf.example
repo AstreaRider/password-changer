@@ -7,8 +7,8 @@ variable "vault_path" {
 # For a nested secret the name is the nested path excluding the mount and data prefix. 
 # For example, for a secret at kvv2/data/foo/bar/baz the name is foo/bar/baz.
 variable "vault_name" {
-  type = string
-  default = "<Full name of the secret>"
+  type = list(string)
+  default = ["<Full name of the secret>"]
 }
 
 # This is a URL with a scheme, a hostname and a port but with no path. 
