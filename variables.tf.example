@@ -26,4 +26,20 @@ variable "vault_token" {
   default = "<Vault token that will be used by Terraform to authenticate>
 }
 
+variable "email_sender" {
+  type = string
+  default = "<email as sender>"
+}
+
+# use app password your email account
+variable "email_sender_password" {
+  type = string
+  default = "<email sender password>"
+}
+
+variable "email_receiver" {
+  type = string
+  default = "<email to notify>"
+}
+
 # dont forget to change file extentsion to .tf

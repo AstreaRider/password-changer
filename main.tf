@@ -8,6 +8,10 @@ terraform {
       source   = "hashicorp/vault"
       version  = "3.18.0"
     }
+     null = {
+      source = "hashicorp/null"
+      version = "3.2.1"
+    }
   }
 }
 
@@ -34,4 +38,24 @@ resource "ssh_resource" "init" {
     "passwd ${data.vault_kv_secret_v2.secret_data["${each.key}"].data["username"]} < /home/${data.vault_kv_secret_v2.secret_data["${each.key}"].data["username"]}/inputfile | echo last update password $(date) with ${data.vault_kv_secret_v2.secret_data["${each.key}"].data["new_password"]} as new password >> /home/${data.vault_kv_secret_v2.secret_data["${each.key}"].data["username"]}/change-password.log | pkill -o -u ${data.vault_kv_secret_v2.secret_data["${each.key}"].data["username"]} sshd"
   ]
 
+}
+
+provider "null" {
+  alias = "provider"
+}
+
+resource "null_resource" "content-email" {
+  provider = null.provider
+  for_each = toset(var.vault_name)
+  provisioner "local-exec" {
+    command = "echo Update password on VM ${each.key}, IP ${data.vault_kv_secret_v2.secret_data["${each.key}"].data["host"]} successfully done at $(date). Use password ${data.vault_kv_secret_v2.secret_data["${each.key}"].data["new_password"]} as new password to login >> content-email.txt"
+  }
+}
+
+resource "null_resource" "send-email" {
+  provider = null.provider
+  provisioner "local-exec" {
+    command = "python3 email-notification.py ${var.email_sender} ${var.email_sender_password} ${var.email_receiver}"
+  }
+  depends_on = [ null_resource.content-email ]
 }

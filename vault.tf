@@ -9,9 +9,9 @@ data "vault_kv_secret_v2" "secret_data" {
   name     = each.key
 }
 
-output "vault_secrets" {
+output "content-email" {
   value = {
-    for k, v in data.vault_kv_secret_v2.secret_data : k => v.data["current_password"]
+    for k, v in data.vault_kv_secret_v2.secret_data : k => "Update password on VM on ${v.name}(${v.data["host"]}) successfully done. Use ${v.data["new_password"]} as new password to login."
   }
   sensitive = true
 }
